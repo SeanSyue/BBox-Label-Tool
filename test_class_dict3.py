@@ -9,15 +9,15 @@ Ver 0.5
 Create class dict.
 def setFocusGotoImage bind with control-G/g
 """
-from tkinter import *
-from PIL import Image, ImageTk
 import os
 import glob
+from tkinter import *
+from PIL import Image, ImageTk
 
 # colors for the bboxes
 COLORS = ['red', 'blue', 'yellow', 'pink', 'cyan', 'green', 'black']
-IMG_FOLDER = './test/Images'
-GT_FOLDER = './test/Labels'
+IMG_FOLDER = './data/Images'
+GT_FOLDER = './data/Labels'
 CLASS_DICT = {'M': 'motorbike', 'Y': 'bicycle', 'P': 'person', 'T': 'truck', 'C': 'car', 'B': 'bus'}
 
 
