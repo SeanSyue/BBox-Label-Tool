@@ -5,9 +5,10 @@
 # Created:     06/06/2014
 # -------------------------------------------------------------------------------
 """
-Ver 0.5
+Ver 1.0
 Create class dict.
 def setFocusGotoImage bind with control-G/g
+Delete unnecessary if-else statement in method loadDir.
 """
 import os
 import glob
@@ -18,7 +19,10 @@ from PIL import Image, ImageTk
 COLORS = ['red', 'blue', 'yellow', 'pink', 'cyan', 'green', 'black']
 IMG_FOLDER = './data/Images'
 GT_FOLDER = './data/Labels'
-CLASS_DICT = {'M': 'motorbike', 'Y': 'bicycle', 'P': 'person', 'T': 'truck', 'C': 'car', 'B': 'bus'}
+CLASS_DICT = {'M': 'motorbike', 'Y': 'bicycle',
+              'P': 'person', 'T': 'truck',
+              'C': 'car', 'B': 'bus',
+              'V': 'van', 'O': 'others'}
 
 
 class PopupWindow(object):
@@ -148,14 +152,11 @@ class LabelTool:
         self.frame.columnconfigure(1, weight=1)
         self.frame.rowconfigure(4, weight=1)
 
-    def loadDir(self, dbg=False):
+    def loadDir(self):
         print("Load image. ")
-        if not dbg:
-            s = self.entry.get()
-            self.parent.focus()
-            self.category = int(s)
-        else:
-            s = r'D:\workspace\python\labelGUI'
+        s = self.entry.get()
+        self.parent.focus()
+        self.category = int(s)
 
         # get image list
         self.imageDir = os.path.join(f'{IMG_FOLDER}', '%03d' % self.category)
@@ -209,7 +210,7 @@ class LabelTool:
                                                               outline=COLORS[(len(self.bboxList) - 1) % len(COLORS)])
                     text_id = self.mainPanel.create_text(old_label['x1'], old_label['y1'],
                                                          text=old_label['cls'],
-                                                         font="Times 20 italic bold",
+                                                         font="Times 12 italic bold",
                                                          fill=COLORS[(len(self.bboxList) - 1) % len(COLORS)])
 
                     self.bboxIdList.append(rect_id)
@@ -251,7 +252,7 @@ class LabelTool:
                 self.textId = self.mainPanel.create_text(new_label['x1'], new_label['y1'],
                                                          text=cls,
                                                          fill=COLORS[(len(self.bboxList) - 1) % len(COLORS)],
-                                                         font='Times 20 italic bold')
+                                                         font='Times 12 italic bold')
                 self.textIdList.append(self.textId)
                 self.textId = None
 
