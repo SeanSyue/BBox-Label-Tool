@@ -35,4 +35,4 @@ page you wish. You can Press key  "g" (case insensitive) to set focus on the inp
 
 ## Ground truth conversion: 
 #### !!!Still under testing !!!
-Tools for converting to YOLO format can be found in "Gt-conversion" direvtory
+Tools for converting to YOLO format can be found in "Gt-conversion" directory. 
