@@ -1,5 +1,6 @@
-### Custom multi-label labelling tool-kit. 
-
+# Custom multi-label labelling tool-kit. 
+-
+##### ! Note: Only python 3.6+ is compatible to this release. For python 3<=3.6, simply change Formatted string literals in the codes. 
 ## Output format: 
 Text file (.txt), which name is identical to the target image, recode labelling infromation in the following format: 
 ```
