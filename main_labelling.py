@@ -183,9 +183,6 @@ class LabelTool:
         labelname = self.imagename + '.txt'
         self.labelfilename = os.path.join(self.outDir, labelname)
 
-        if not os.path.exists(self.labelfilename):
-            os.makedirs(self.labelfilename)
-
         if os.path.exists(self.labelfilename):
             with open(self.labelfilename) as f:
                 for (i, line) in enumerate(f):
