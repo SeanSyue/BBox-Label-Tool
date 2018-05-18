@@ -29,19 +29,6 @@ look like this:
 │   └── 003
 └── Labes
 ```
-```
-.
-├── data
-│   ├── data1.bin
-│   ├── data2.sql
-│   └── data3.inf
-├── images
-│   ├── background.jpg
-│   ├── icon.gif
-│   └── logo.jpg
-├── program.exe
-└── readme.txt
-```
 5. Change the "IMG_EXTENSION" in file "main_labelling.py" to fit the format of your images; 
 6. Change "CLASS_DICT" in the file "main_labelling.py" to the format below:
 ```
