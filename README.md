@@ -9,7 +9,8 @@ CLASS_NAME_2 X2_MIN Y2_MIN X2_MAX Y2_MAX
 ......
 ```
 The first line shows total object counts in the image. 
-Each line indicates one object recorded, with class name and the coordination of top-left point and bottom-right point
+
+The folloing lines indicates one object recorded, with class name and the coordination of top-left point and bottom-right point
 of bounding box. 
 
 ## Preparation: 
