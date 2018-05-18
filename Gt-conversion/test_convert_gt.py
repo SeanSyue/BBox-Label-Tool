@@ -1,6 +1,8 @@
 import os
 from PIL import Image
+
 FILE = 'data/Labels/001/3.txt'
+
 
 def convert_label(name_):
     label_ = {'motorbike': 0, 'bicycle': 1,

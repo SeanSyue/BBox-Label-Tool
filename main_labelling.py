@@ -1,30 +1,20 @@
-# -------------------------------------------------------------------------------
-# Name:        Object bounding box label tool
-# Purpose:     Label object bboxes for ImageNet Detection data
-# Author:      Qiushi
-# Created:     06/06/2014
-# -------------------------------------------------------------------------------
 """
-Ver 1.1
-Delete field "egList" and "egDir" in LabelTool
-field "imageList" is now sorted in LabelTool.
-Simplify the assignment of field "STATE: in LabelTool
-Modify LabelTool, image folder and output folder are now treated as input of this class.
-Add OSError handler in saveImage method.
+Ver 1.2
+Allow image file extension specification
 """
 import os
 import glob
 from tkinter import *
 from PIL import Image, ImageTk
 
-# colors for the bboxes
-COLORS = ['red', 'blue', 'yellow', 'pink', 'cyan', 'green', 'black']
 IMG_FOLDER = './data/Images'
 GT_FOLDER = './data/Labels'
+IMG_EXTENSION = 'JPEG'  # Image file extension name
+COLORS = ['red', 'blue', 'yellow', 'pink', 'cyan', 'green', 'black']  # colors for the bounding boxes
 CLASS_DICT = {'M': 'motorbike', 'Y': 'bicycle',
               'P': 'person', 'T': 'truck',
               'C': 'car', 'B': 'bus',
-              'V': 'van', 'O': 'others'}
+              'V': 'van', 'O': 'others'}  # Label name options
 
 
 class PopupWindow(object):
@@ -160,10 +150,10 @@ class LabelTool:
 
         # get image list
         self.imageDir = os.path.join(f'{self.image_root}', '%03d' % self.category)
-        self.imageList = glob.glob(os.path.join(self.imageDir, '*.JPEG'))
-        self.imageList.sort(key=lambda name: int(os.path.split(name)[1].strip('.jpeg')))
+        self.imageList = glob.glob(os.path.join(self.imageDir, f'*.{IMG_EXTENSION}'))
+        self.imageList.sort(key=lambda name: int(os.path.split(name)[1].strip(f'.{IMG_EXTENSION}')))
         if len(self.imageList) == 0:
-            print("No .JPEG images found in the specified dir!")
+            print(f"No {IMG_EXTENSION} images found in the specified dir!")
             return
 
         # default to the 1st image in the collection
@@ -192,19 +182,22 @@ class LabelTool:
         self.imagename = os.path.split(imagepath)[-1].split('.')[0]
         labelname = self.imagename + '.txt'
         self.labelfilename = os.path.join(self.outDir, labelname)
+
+        if not os.path.exists(self.labelfilename):
+            os.makedirs(self.labelfilename)
+
         if os.path.exists(self.labelfilename):
             with open(self.labelfilename) as f:
                 for (i, line) in enumerate(f):
                     if i == 0:
                         continue
                     tmp = [l.strip() for l in line.split(' ')]
-                    # self.bboxList.append(tuple(tmp))
                     old_label = {'cls': tmp[0],
                                  'x1': min(int(tmp[1]), int(tmp[3])),
                                  'y1': min(int(tmp[2]), int(tmp[4])),
                                  'x2': max(int(tmp[1]), int(tmp[3])),
-                                 'y2': max(int(tmp[2]), int(tmp[4]))}  # NEW
-                    self.bboxList.append('{cls} {x1} {y1} {x2} {y2}'.format(**old_label))  # NEW
+                                 'y2': max(int(tmp[2]), int(tmp[4]))}
+                    self.bboxList.append('{cls} {x1} {y1} {x2} {y2}'.format(**old_label))
                     rect_id = self.mainPanel.create_rectangle(old_label['x1'], old_label['y1'],
                                                               old_label['x2'], old_label['y2'],
                                                               width=2,
@@ -215,9 +208,8 @@ class LabelTool:
                                                          fill=COLORS[(len(self.bboxList) - 1) % len(COLORS)])
 
                     self.bboxIdList.append(rect_id)
-                    # self.textIdList.append(text_id-1)
                     self.textIdList.append(text_id)
-                    self.listbox.insert(END, '{cls}: ({x1}, {y1}) -> ({x2}, {y2})'.format(**old_label))  # NEW
+                    self.listbox.insert(END, '{cls}: ({x1}, {y1}) -> ({x2}, {y2})'.format(**old_label))
                     self.listbox.itemconfig(len(self.bboxIdList) - 1,
                                             fg=COLORS[(len(self.bboxIdList) - 1) % len(COLORS)])
             if len(self.bboxIdList) != len(self.textIdList):
@@ -227,8 +219,7 @@ class LabelTool:
         with open(self.labelfilename, 'w') as f:
             f.write('{}\n'.format(len(self.bboxList)))
             for bbox in self.bboxList:
-                # f.write(' '.join(map(str, bbox)) + '\n')
-                f.write('{}\n'.format(bbox))  # NEW
+                f.write('{}\n'.format(bbox))
         try:
             print("------- Image No. {} saved -------".format(self.cur))
         except OSError:
@@ -250,8 +241,8 @@ class LabelTool:
             else:  # self.window.is_canceled is True:
                 cls = self.window.value  # NEW
                 new_label = {'cls': cls, 'x1': min(x1, x2), 'y1': min(y1, y2),
-                             'x2': max(x1, x2), 'y2': max(y1, y2)}  # NEW
-                self.bboxList.append('{cls} {x1} {y1} {x2} {y2}'.format(**new_label))  # NEW
+                             'x2': max(x1, x2), 'y2': max(y1, y2)}
+                self.bboxList.append('{cls} {x1} {y1} {x2} {y2}'.format(**new_label))
 
                 self.textId = self.mainPanel.create_text(new_label['x1'], new_label['y1'],
                                                          text=cls,
@@ -324,21 +315,21 @@ class LabelTool:
         if len(sel) != 1:
             return
         idx = int(sel[0])
-        self.mainPanel.delete(self.bboxIdList[idx])  # NEW
+        self.mainPanel.delete(self.bboxIdList[idx])
         self.mainPanel.delete(self.textIdList[idx])
         self.bboxIdList.pop(idx)
-        self.textIdList.pop(idx)  # NEW
+        self.textIdList.pop(idx)
         self.bboxList.pop(idx)
         self.listbox.delete(idx)
 
     def clearAllBBox(self):
         for b_i in range(len(self.bboxIdList)):
             self.mainPanel.delete(self.bboxIdList[b_i])
-        for t_i in range(len(self.textIdList)):  # NEW
-            self.mainPanel.delete(self.textIdList[t_i])  # NEW
+        for t_i in range(len(self.textIdList)):
+            self.mainPanel.delete(self.textIdList[t_i])
         self.listbox.delete(0, len(self.bboxList))
         self.bboxIdList = []
-        self.textIdList = []  # NEW
+        self.textIdList = []
         self.bboxList = []
 
     def prevImage(self, *event):
