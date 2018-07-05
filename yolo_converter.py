@@ -1,5 +1,4 @@
 import os
-
 from PIL import Image
 
 IMG_FOLDER = './data/Images/001'
@@ -41,6 +40,11 @@ def gt_converter(item_list_, img_size_):
 
 
 def main():
+
+    # create `YOLO_GT_FOLDER` if it's not existed
+    if not os.path.isdir(YOLO_GT_FOLDER):
+        os.makedirs(YOLO_GT_FOLDER)
+
     for i in range(1, len(os.listdir(IMG_FOLDER)) + 1):
 
         # get image size

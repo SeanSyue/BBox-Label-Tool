@@ -1,5 +1,4 @@
-# Custom multi-label labelling tool-kit. 
-##### ! Note: Only python 3.6+ is compatible to this release. For python 3<=3.6, simply change Formatted string literals in the codes. 
+# Custom multi-label labelling tool-kit (with yolo format transformer). 
 ## Output format: 
 Text file (.txt), which name is identical to the target image, recode labelling infromation in the following format: 
 ```
@@ -13,10 +12,10 @@ CLASS_NAME_2 X2_MIN Y2_MIN X2_MAX Y2_MAX
 of bounding box. 
 
 ## Preparation: 
-1. Create folder "data";
-2. In the folder "data, create two more folders, named as "Images" and "Labels" respectively. 
-3. Put all your images in one folder, name this folder as "001" and put it in the "Images" folder;
-4. For more images folders, name them as 002, 003... and so on. The final structure in the "data" folder is something 
+1. Create folder `data`;
+2. In the folder `data`, create two more folders, named as `Images` and `Labels` respectively. 
+3. Put all your images in one folder, name this folder as `001` and put it in the `Images` folder;
+4. For more images folders, name them as `002`, `003`... and so on. The final structure in the `data` folder is something 
 look like this: 
 ```
 .
@@ -29,14 +28,14 @@ look like this:
 │   └── 003
 └── Labes
 ```
-5. Change the "IMG_EXTENSION" in file "main_labelling.py" to fit the format of your images; 
-6. Change "CLASS_DICT" in the file "main_labelling.py" to the format below:
+5. Change the `IMG_EXTENSION` in file `main_labelling.py` to fit the format of your images; 
+6. Change `CLASS_DICT` in the file `main_labelling.py` to the format below:
 ```
 {"CODE_1": CLASS_NAME_1, "CODE_2": CLASS_NAME_2} 
 ```
 
 ## Labelling:
-1. Input the number for image directory. For example, input "1" for "data/Images/001"; 
+1. Input the number for image directory. For example, input `1` for `data/Images/001`; 
 2. Click two points one by one to draw a rectangle of the region you wanna labelling; 
 3. Key in the label codes (the thing you assigned in step 5 of preparation procedure)in the popup window. 
 
@@ -47,5 +46,8 @@ button "Next >>" or "<< Prev" to do the same task.
 page you wish. You can Press key  "g" (case insensitive) to set focus on the input box. 
 
 ## Ground truth conversion: 
-#### !!!Still under testing !!!
-Tools for converting to YOLO format can be found in "Gt-conversion" directory. 
+Do the following steps to transform your label file. 
+1. Create folder named `Yolo_gt` in the `data` folder;
+2. run the `yolo_converter.py` script. 
+
+
