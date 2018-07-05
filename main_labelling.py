@@ -9,7 +9,7 @@ from PIL import Image, ImageTk
 
 IMG_FOLDER = './data/Images'
 GT_FOLDER = './data/Labels'
-IMG_EXTENSION = 'JPEG'  # Image file extension name
+IMG_EXTENSION = 'jpg'  # Image file extension name
 COLORS = ['red', 'blue', 'yellow', 'pink', 'cyan', 'green', 'black']  # colors for the bounding boxes
 CLASS_DICT = {'M': 'motorbike', 'Y': 'bicycle',
               'P': 'person', 'T': 'truck',
@@ -149,11 +149,11 @@ class LabelTool:
         self.category = int(s)
 
         # get image list
-        self.imageDir = os.path.join(f'{self.image_root}', '%03d' % self.category)
-        self.imageList = glob.glob(os.path.join(self.imageDir, f'*.{IMG_EXTENSION}'))
-        self.imageList.sort(key=lambda name: int(os.path.split(name)[1].strip(f'.{IMG_EXTENSION}')))
+        self.imageDir = os.path.join('{}'.format(self.image_root), '%03d' % self.category)
+        self.imageList = glob.glob(os.path.join(self.imageDir, '*.{}'.format(IMG_EXTENSION)))
+        self.imageList.sort(key=lambda name: int(os.path.split(name)[1].strip('.{}'.format(IMG_EXTENSION))))
         if len(self.imageList) == 0:
-            print(f"No {IMG_EXTENSION} images found in the specified dir!")
+            print("No {} images found in the specified dir!".format(IMG_EXTENSION))
             return
 
         # default to the 1st image in the collection
@@ -161,7 +161,7 @@ class LabelTool:
         self.total = len(self.imageList)
 
         # set up output dir
-        self.outDir = os.path.join(f'{self.gt_root}', '%03d' % self.category)
+        self.outDir = os.path.join('{}'.format(self.gt_root), '%03d' % self.category)
         if not os.path.exists(self.outDir):
             os.mkdir(self.outDir)
 

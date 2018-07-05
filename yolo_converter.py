@@ -1,7 +1,10 @@
 import os
+
 from PIL import Image
 
-FILE = 'data/Labels/001/3.txt'
+IMG_FOLDER = './data/Images/001'
+LABEL_FOLDER = './data/Labels/001'
+YOLO_GT_FOLDER = './data/Yolo_gt/001'
 
 
 def convert_label(name_):
@@ -13,6 +16,7 @@ def convert_label(name_):
 
 
 def convert_box(size, box):
+    """ Bounding box format handler """
     dw = 1. / (size[0])
     dh = 1. / (size[1])
     x = (box[0] + box[1]) / 2.0 - 1
@@ -27,6 +31,7 @@ def convert_box(size, box):
 
 
 def gt_converter(item_list_, img_size_):
+    """ Convert one item in original label file to yolo format"""
     box_item = item_list_.split()
     box_item[0] = convert_label(box_item[0])
     box_item[2], box_item[3] = box_item[3], box_item[2]  # Change the order to "xmin, xmax, ymin, ymax"
@@ -35,18 +40,29 @@ def gt_converter(item_list_, img_size_):
     return ' '.join(box_item)
 
 
-for i in range(1, 172):
-    with Image.open(f'data/Images/001/{i}.jpeg') as img:
-        img_size = img.size
+def main():
+    for i in range(1, len(os.listdir(IMG_FOLDER)) + 1):
 
-    with open(os.path.join('data/Yolo_gt/001', '{}.txt'.format(i)), 'w') as out:
-        with open(f'data/Labels/001/{i}.txt') as raw:
+        # get image size
+        with Image.open(os.path.join(IMG_FOLDER, '{}.jpg'.format(i))) as img:
+            img_size = img.size
+
+        # open original label file and get objects count and information of each object
+        with open(os.path.join(LABEL_FOLDER, '{}.txt'.format(i))) as raw:
             cls_count = raw.readline()
             item_list = list(map(lambda x: x.strip('\n'), raw.readlines()))
+
+        # write new yolo gt file
+        with open(os.path.join(YOLO_GT_FOLDER, '{}.txt'.format(i)), 'w') as out:
+            # check if label counts in the origin label file is correct or not
             if int(cls_count) == len(item_list):
                 for item in item_list:
                     converted = gt_converter(item, img_size)
                     print('{}'.format(converted), file=out)
             else:
-                print(f"Mismatch label numbers found in file {i}.txt")
+                print("Mismatch label numbers found in file {}.txt".format(i))
                 continue
+
+
+if __name__ == '__main__':
+    main()
