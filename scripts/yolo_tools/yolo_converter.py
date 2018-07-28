@@ -2,6 +2,8 @@
 import os
 from PIL import Image
 
+os.chdir('../..')  # change work directory to project root
+
 # global parameters needs to be modified for each task
 IMG_FOLDER = './data/Images/001'  # origin image files folder
 LABEL_FOLDER = './data/Labels/001'  # origin label files folder
