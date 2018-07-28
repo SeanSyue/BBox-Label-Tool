@@ -1,17 +1,22 @@
+""" Convert origin ground truth files to yolo format """
 import os
 from PIL import Image
 
-IMG_FOLDER = './data/Images/001'
-LABEL_FOLDER = './data/Labels/001'
-YOLO_GT_FOLDER = './data/Yolo_gt/001'
+# global parameters needs to be modified for each task
+IMG_FOLDER = './data/Images/001'  # origin image files folder
+LABEL_FOLDER = './data/Labels/001'  # origin label files folder
+YOLO_GT_FOLDER = './data/Yolo_gt/001'  # newly generated yolo ground truth directory
+LABEL_NAMES = ['type_1', 'type_2', 'type_3', 'type_4', 'type_5', 'type_6']  # each label names in order
+IMG_EXTENSION = 'bmp'  # extension of image files
 
 
 def convert_label(name_):
-    label_ = {'motorbike': 0, 'bicycle': 1,
-              'person': 2, 'truck': 3,
-              'car': 4, 'bus': 5,
-              'van': 6, 'others': 7}
-    return label_[name_]
+    """ 
+    Convert each label name listed in `LABEL_NAMES` as corresponding index. 
+    :param name_: real name for each labelled item
+    """
+    label = {k: i for i, k in enumerate(LABEL_NAMES)}
+    return label[name_]
 
 
 def convert_box(size, box):
@@ -40,31 +45,29 @@ def gt_converter(item_list_, img_size_):
 
 
 def main():
-
     # create `YOLO_GT_FOLDER` if it's not existed
     if not os.path.isdir(YOLO_GT_FOLDER):
         os.makedirs(YOLO_GT_FOLDER)
 
-    for i in range(1, len(os.listdir(IMG_FOLDER)) + 1):
-
+    for img_file in os.listdir(IMG_FOLDER):
         # get image size
-        with Image.open(os.path.join(IMG_FOLDER, '{}.jpg'.format(i))) as img:
+        with Image.open(os.path.join(IMG_FOLDER, img_file)) as img:
             img_size = img.size
 
         # open original label file and get objects count and information of each object
-        with open(os.path.join(LABEL_FOLDER, '{}.txt'.format(i))) as raw:
-            cls_count = raw.readline()
-            item_list = list(map(lambda x: x.strip('\n'), raw.readlines()))
+        with open(os.path.join(LABEL_FOLDER, img_file.replace(IMG_EXTENSION, 'txt'))) as gt_raw:
+            cls_count = gt_raw.readline()
+            item_list = list(map(lambda x: x.strip('\n'), gt_raw.readlines()))
 
         # write new yolo gt file
-        with open(os.path.join(YOLO_GT_FOLDER, '{}.txt'.format(i)), 'w') as out:
+        with open(os.path.join(YOLO_GT_FOLDER, img_file.replace(IMG_EXTENSION, 'txt')), 'w') as gt_out:
             # check if label counts in the origin label file is correct or not
             if int(cls_count) == len(item_list):
                 for item in item_list:
                     converted = gt_converter(item, img_size)
-                    print('{}'.format(converted), file=out)
+                    print('{}'.format(converted), file=gt_out)
             else:
-                print("Mismatch label numbers found in file {}.txt".format(i))
+                print("Mismatch label numbers found in file {}".format(img_file.replace(IMG_EXTENSION, 'txt')))
                 continue
 
 
