@@ -48,6 +48,6 @@ page you wish. You can Press key  "g" (case insensitive) to set focus on the inp
 ## Ground truth conversion: 
 Do the following steps to transform your label file. 
 1. Create folder named `Yolo_gt` in the `data` folder;
-2. run the `yolo_converter.py` script. 
+2. run the [`yolo_converter.py`](https://github.com/SeanSyue/BBox-Label-Tool/tree/master/scripts/yolo_tools/yolo_converter.py) script in `script/yolo_tools`. 
 
 

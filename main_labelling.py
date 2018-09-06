@@ -4,17 +4,21 @@ Allow image file extension specification
 """
 import os
 import glob
+import re
 from tkinter import *
 from PIL import Image, ImageTk
 
 IMG_FOLDER = './data/Images'
 GT_FOLDER = './data/Labels'
-IMG_EXTENSION = 'jpg'  # Image file extension name
+IMG_EXTENSION = 'bmp'  # Image file extension name
 COLORS = ['red', 'blue', 'yellow', 'pink', 'cyan', 'green', 'black']  # colors for the bounding boxes
-CLASS_DICT = {'M': 'motorbike', 'Y': 'bicycle',
-              'P': 'person', 'T': 'truck',
-              'C': 'car', 'B': 'bus',
-              'V': 'van', 'O': 'others'}  # Label name options
+CLASS_DICT = {'D': 'defect'}  # Label name options
+
+
+def sorted_alphanumeric(data):
+    convert = lambda text: int(text) if text.isdigit() else text.lower()
+    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+    return sorted(data, key=alphanum_key)
 
 
 class PopupWindow(object):
@@ -150,10 +154,9 @@ class LabelTool:
 
         # get image list
         self.imageDir = os.path.join('{}'.format(self.image_root), '%03d' % self.category)
-        self.imageList = glob.glob(os.path.join(self.imageDir, '*.{}'.format(IMG_EXTENSION)))
-        self.imageList.sort(key=lambda name: int(os.path.split(name)[1].strip('.{}'.format(IMG_EXTENSION))))
+        self.imageList = sorted_alphanumeric(glob.glob(os.path.join(self.imageDir, '*.{}'.format(IMG_EXTENSION))))
         if len(self.imageList) == 0:
-            print("No {} images found in the specified dir!".format(IMG_EXTENSION))
+            print("No {} images found in {}!".format(IMG_EXTENSION, self.imageDir))
             return
 
         # default to the 1st image in the collection
@@ -343,7 +346,6 @@ class LabelTool:
 
     def gotoImage(self, *event):
         idx = int(self.idxEntry.get())
-        # if 1 <= idx and idx <= self.total:
         if 1 <= idx <= self.total:
             self.saveLabel()
             self.cur = idx
